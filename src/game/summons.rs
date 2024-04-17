@@ -41,6 +41,7 @@ fn spawn_summons(
     mut texture_atlas_layouts: ResMut<Assets<TextureAtlasLayout>>,
 ) {
     let window = window_query.get_single().unwrap();
+    let cursor_position = window.cursor_position();
     let mut rng = rand::thread_rng();
 
     if let Some(mut player) = player_query.iter_mut().next() {
@@ -56,8 +57,12 @@ fn spawn_summons(
                     if summon_info.collectible_type_required.unwrap() == i && *collectibles_amount >= ammount_required {
                         *collectibles_amount -= ammount_required;
 
-                        // Spawn summon
-                        let position = Vec3::new(rng.gen_range(0.0..window.width()), rng.gen_range(0.0..window.height()), 0.0);
+                        // Spawn summon at the cursor position, if the cursor is off screen spawn at a random position
+                        let position = match cursor_position {
+                          Some(pos) => Vec3::new(pos.x, (window.height() - pos.y).abs(), 0.0),
+                          None => Vec3::new(rng.gen_range(0.0..window.width()), rng.gen_range(0.0..window.height()), 0.0),
+                        };
+
                         let summon = characters::Character {
                             last_shot: Some(Instant::now()),
                             summon: true,
@@ -242,7 +247,6 @@ fn shoot_ranged_attacks(
                 );
             }
         }
-
     }
 }
 

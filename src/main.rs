@@ -4,7 +4,6 @@ use bevy::window::{PrimaryWindow, WindowMode};
 pub mod art;
 pub mod ui;
 pub mod game;
-
 #[derive(States, Debug, Clone, Copy, Eq, PartialEq, Hash, Default)]
 pub enum AppState {
     #[default]
